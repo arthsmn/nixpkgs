@@ -1,0 +1,15 @@
+diff --git a/src/meson.build b/src/meson.build
+index ffef8d5..e9c9abf 100644
+--- a/src/meson.build
++++ b/src/meson.build
+@@ -10,9 +10,7 @@ bin_conf.set('sourcedir', meson.project_source_root())
+ 
+ meson.add_install_script('../build-aux/build-index.js', pkgdatadir)
+ 
+-blueprint_compiler = find_program(
+-  '/app/bin/blueprint-compiler',
+-)
++blueprint_compiler = find_program('blueprint-compiler').full_path()
+ 
+ configure_file(
+   input: 'bin.js',
