@@ -29,6 +29,7 @@ let
     { hyprfocus = import ./hyprfocus.nix; }
     { hyprgrass = import ./hyprgrass.nix; }
     { hyprscroller = import ./hyprscroller.nix; }
+    { hyprslidr = import ./hyprslidr.nix; }
     { hyprspace = import ./hyprspace.nix; }
     { hyprsplit = import ./hyprsplit.nix; }
     (import ./hyprland-plugins.nix)
