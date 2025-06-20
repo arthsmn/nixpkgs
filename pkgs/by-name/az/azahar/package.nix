@@ -68,7 +68,6 @@ stdenv.mkDerivation (finalAttrs: {
 
   buildInputs =
     [
-      alsa-lib
       boost
       catch2_3
       cryptopp
@@ -87,7 +86,6 @@ stdenv.mkDerivation (finalAttrs: {
       nlohmann_json
       openal
       openssl
-      pipewire
       portaudio
       qt6.qtbase
       qt6.qtmultimedia
@@ -101,6 +99,10 @@ stdenv.mkDerivation (finalAttrs: {
       xorg.libX11
       xorg.libXext
       zstd
+    ]
+    ++ optionals stdenv.hostPlatform.isLinux [
+      alsa-lib
+      pipewire
     ]
     ++ optionals enableQtTranslations [ qt6.qttools ]
     ++ optionals enableCubeb [ cubeb ]
@@ -120,19 +122,21 @@ stdenv.mkDerivation (finalAttrs: {
     })
   ];
 
-  postPatch = ''
-    # Fix "file not found" bug when looking in var/empty instead of opt
-    mkdir externals/dynarmic/src/dynarmic/ir/var
-    ln -s ../opt externals/dynarmic/src/dynarmic/ir/var/empty
+  postPatch =
+    ''
+      # Fix "file not found" bug when looking in var/empty instead of opt
+      mkdir externals/dynarmic/src/dynarmic/ir/var
+      ln -s ../opt externals/dynarmic/src/dynarmic/ir/var/empty
 
-    # We already know the submodules are present
-    substituteInPlace CMakeLists.txt \
-      --replace-fail "check_submodules_present()" ""
-
-    # Add gamemode
-    substituteInPlace externals/gamemode/include/gamemode_client.h \
-      --replace-fail "libgamemode.so.0" "${getLib gamemode}/lib/libgamemode.so.0"
-  '';
+      # We already know the submodules are present
+      substituteInPlace CMakeLists.txt \
+        --replace-fail "check_submodules_present()" ""
+    ''
+    + lib.optionalString stdenv.hostPlatform.isLinux ''
+      # Add gamemode
+      substituteInPlace externals/gamemode/include/gamemode_client.h \
+        --replace-fail "libgamemode.so.0" "${getLib gamemode}/lib/libgamemode.so.0"
+    '';
 
   cmakeFlags = [
     (cmakeBool "USE_SYSTEM_LIBS" true)
@@ -152,5 +156,6 @@ stdenv.mkDerivation (finalAttrs: {
     license = lib.licenses.gpl2Only;
     maintainers = with lib.maintainers; [ arthsmn ];
     mainProgram = "azahar";
+    platforms = lib.platforms.all;
   };
 })
