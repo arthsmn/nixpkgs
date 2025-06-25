@@ -41,7 +41,6 @@
   cubeb,
   useDiscordRichPresence ? true,
   rapidjson,
-  enableSSE42 ? true, # Disable if your hardware doesn't support SSE 4.2 (mainly CPUs before 2011)
 }:
 let
   inherit (lib)
@@ -143,7 +142,7 @@ stdenv.mkDerivation (finalAttrs: {
     (cmakeBool "ENABLE_QT_TRANSLATION" enableQtTranslations)
     (cmakeBool "ENABLE_CUBEB" enableCubeb)
     (cmakeBool "USE_DISCORD_PRESENCE" useDiscordRichPresence)
-    (cmakeBool "ENABLE_SSE42" enableSSE42)
+    (cmakeBool "ENABLE_SSE42" stdenv.hostPlatform.sse4_2Support)
   ];
 
   meta = {
